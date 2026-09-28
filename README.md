@@ -1,11 +1,92 @@
-# expo-logs
+<p align="center">
+  <img src="./docs/images/hero.png" alt="expo-logs: file logging for Expo apps on iOS, Android and Web" width="100%" />
+</p>
 
-[![npm](https://img.shields.io/npm/v/expo-logs.svg)](https://www.npmjs.com/package/expo-logs)
-[![license](https://img.shields.io/npm/l/expo-logs.svg)](./LICENSE)
-![platforms](https://img.shields.io/badge/platforms-iOS%20%7C%20Android%20%7C%20Web-blue)
-![Expo Go](https://img.shields.io/badge/Expo%20Go-compatible-000020)
+<h1 align="center">expo-logs</h1>
 
-A file logger for Expo apps, written in pure TypeScript.
+<p align="center">
+  <b>A file logger for Expo apps, written in pure TypeScript.</b><br/>
+  Runs in Expo Go · Ships over expo-updates · iOS, Android &amp; Web
+</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/expo-logs"><img src="https://img.shields.io/npm/v/expo-logs.svg" alt="npm version" /></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/npm/l/expo-logs.svg" alt="MIT license" /></a>
+  <img src="https://img.shields.io/badge/platforms-iOS%20%7C%20Android%20%7C%20Web-blue" alt="iOS, Android and Web" />
+  <img src="https://img.shields.io/badge/Expo%20Go-compatible-000020" alt="Expo Go compatible" />
+  <img src="https://img.shields.io/badge/native%20code-none-success" alt="No native code" />
+</p>
+
+<p align="center">
+  Created by <a href="https://binnicordova.com"><b>Binni Cordova</b></a>, Senior Software Engineer &amp; Mobile Architect<br/>
+  <a href="https://binnicordova.com">BinniCordova.com</a> ·
+  <a href="https://github.com/binnicordova">GitHub</a> ·
+  <a href="https://www.linkedin.com/in/binnicordova">LinkedIn</a> ·
+  <a href="https://www.npmjs.com/~binnizenobiocordovaleandro">npm</a> ·
+  <a href="https://play.google.com/store/apps/developer?id=BinniCordova.com">Google Play</a>
+</p>
+
+---
+
+## Get started in 3 steps
+
+<p align="center">
+  <img src="./docs/images/steps.png" alt="Install, configure, share: the three steps to use expo-logs" width="100%" />
+</p>
+
+**1. Install**
+
+```sh
+npx expo install expo-logs expo-file-system expo-sharing
+```
+
+**2. Configure once, at startup**
+
+```ts
+import { FileLogger } from 'expo-logs';
+
+FileLogger.configure({ captureConsole: true, captureUnhandledErrors: true });
+```
+
+Every `console.log/info/warn/error/debug` call is now also written to a rotating file on the device.
+
+**3. Let users send you their logs**
+
+```ts
+await FileLogger.shareLogFiles({ compressFiles: true });
+```
+
+## See it running
+
+Real screenshots of the [example app](./example), running in Expo Go on the iOS Simulator (iPhone 17, iOS 26.5):
+
+<table>
+  <tr>
+    <td align="center" width="33%"><img src="./docs/images/screenshot-logs.png" alt="Console calls captured into a log file" /></td>
+    <td align="center" width="33%"><img src="./docs/images/screenshot-rotation-dark.png" alt="500 lines rotated into three 8 KB files, dark mode" /></td>
+    <td align="center" width="33%"><img src="./docs/images/screenshot-share.png" alt="iOS share sheet with the exported .log file" /></td>
+  </tr>
+  <tr>
+    <td align="center"><sub><b>Capture</b><br/><code>console.*</code> and tagged loggers written to disk</sub></td>
+    <td align="center"><sub><b>Rotate</b><br/>500 lines → 8 KB files, only the newest 3 kept</sub></td>
+    <td align="center"><sub><b>Share</b><br/>Native share sheet with the <code>.log</code> (or <code>.zip</code>)</sub></td>
+  </tr>
+</table>
+
+## Real use cases
+
+<p align="center">
+  <img src="./docs/images/use-cases.png" alt="Use cases: support bug reports, QA on TestFlight, field apps offline, crash forensics" width="100%" />
+</p>
+
+- **"Send logs" button in support.** A user reports a bug; one tap attaches the last few days of logs to an email (`sendLogFilesByEmail`) or the share sheet (`shareLogFiles`). No more "can you describe exactly what you did?".
+- **QA and beta builds.** Testers on TestFlight, internal tracks or Expo Go export a `.zip` of logs with every ticket, while `logLevel: LogLevel.Debug` stays off in production.
+- **Field and offline apps.** Delivery, inspection or IoT apps that run for hours without a connection keep a local, size-capped history (`maximumFileSize`, `maximumNumberOfFiles`) that can be uploaded later with `getLogFilePaths()`.
+- **Crash forensics.** With `captureUnhandledErrors: true`, the stack trace of a fatal JS error is flushed to disk, so you can read the lines that led up to it on the next launch.
+- **OTA-only teams.** Add logging to an app that's already in the stores with `eas update`, since there's no native code to rebuild.
+- **Web builds.** The same API works in the browser (backed by `localStorage`), so an Expo Router web app can offer the same "download logs" button.
+
+## About
 
 `expo-logs` writes your app's logs to rotating files on the device, captures `console.*` output, and lets users share or email the logs to you. It has **no native code**: it's built on modules that already ship inside Expo Go (`expo-file-system`, `expo-sharing`, `expo-mail-composer`), so it:
 
@@ -17,15 +98,27 @@ The API follows [`react-native-file-logger`](https://github.com/BeTomorrow/react
 
 ## Contents
 
+- [Get started in 3 steps](#get-started-in-3-steps)
+- [See it running](#see-it-running)
+- [Real use cases](#real-use-cases)
+- [About](#about)
+- [Contents](#contents)
 - [Installation](#installation)
 - [Quick start](#quick-start)
 - [Configuration](#configuration)
 - [API](#api)
+  - [Writing](#writing)
+  - [Level and console capture](#level-and-console-capture)
+  - [Files](#files)
+  - [Errors](#errors)
+  - [Other exports](#other-exports)
 - [How files are written](#how-files-are-written)
 - [Platform notes](#platform-notes)
 - [Migrating from react-native-file-logger](#migrating-from-react-native-file-logger)
 - [Example app](#example-app)
 - [Contributing](#contributing)
+- [Author](#author)
+- [License](#license)
 
 ## Installation
 
@@ -241,13 +334,26 @@ CI=1 bun run test
 bun run build      # compiles src/ to build/
 ```
 
-To publish:
+push your changes to a branch and open a pull request. The example app reloads the library from `src/` so you can test your changes in Expo Go without rebuilding.
 
-```sh
-npm login
-npm publish        # prepublishOnly runs clean, tests, lint and the build
-```
+## Author
+
+<table>
+  <tr>
+    <td>
+      <b>Binni Cordova</b>: Senior Software Engineer &amp; Mobile Architect.<br/>
+      I build production React Native / Expo apps and developer tools. If <code>expo-logs</code> helps you, a ⭐ on GitHub is appreciated.<br/><br/>
+      🌐 <a href="https://binnicordova.com">BinniCordova.com</a><br/>
+      💻 <a href="https://github.com/binnicordova">github.com/binnicordova</a><br/>
+      💼 <a href="https://www.linkedin.com/in/binnicordova">linkedin.com/in/binnicordova</a><br/>
+      📦 <a href="https://www.npmjs.com/~binnizenobiocordovaleandro">More packages on npm</a><br/>
+      📱 <a href="https://play.google.com/store/apps/developer?id=BinniCordova.com">Apps on Google Play</a>
+    </td>
+  </tr>
+</table>
+
+Need help adding logging, OTA updates or observability to your Expo app? [Get in touch through BinniCordova.com](https://binnicordova.com).
 
 ## License
 
-MIT © [BinniCordova](https://github.com/binnicordova)
+MIT © [Binni Cordova](https://binnicordova.com)

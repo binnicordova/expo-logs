@@ -40,7 +40,7 @@ function Screen() {
     setFiles(list);
     const last = list[list.length - 1];
     const text = last ? await FileLogger.readLogFile(last.name) : '';
-    setPreview(text.split('\n').slice(-40).join('\n'));
+    setPreview(text.trimEnd().split('\n').slice(-30).join('\n'));
     setCapturing(FileLogger.isConsoleCaptureEnabled());
   }, []);
 
@@ -146,11 +146,9 @@ function Screen() {
 
         <View style={[styles.card, { backgroundColor: c.card }]}>
           <Text style={[styles.cardTitle, { color: c.text }]}>Latest file (tail)</Text>
-          <ScrollView horizontal>
-            <Text testID="log-preview" style={[styles.mono, { color: c.text }]}>
-              {preview || '—'}
-            </Text>
-          </ScrollView>
+          <Text testID="log-preview" style={[styles.mono, { color: c.text }]}>
+            {preview || '—'}
+          </Text>
         </View>
       </ScrollView>
     </SafeAreaView>
